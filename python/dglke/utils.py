@@ -211,18 +211,17 @@ class CommonArgParser(argparse.ArgumentParser):
     def __init__(self):
         super(CommonArgParser, self).__init__()
 
-        self.add_argument('--model_name', default='TransE',
+        self.add_argument('--model_name', default='RotatE',
                           choices=['TransE', 'TransE_l1', 'TransE_l2', 'TransR',
-                                   'RESCAL', 'DistMult', 'ComplEx', 'RotatE',
-                                   'SimplE'],
+                                   'RESCAL', 'DistMult', 'ComplEx', 'RotatE'],
                           help='The models provided by DGL-KE.')
-        self.add_argument('--data_path', type=str, default='data',
+        self.add_argument('--data_path', type=str, default='kg',
                           help='The path of the directory where DGL-KE loads knowledge graph data.')
-        self.add_argument('--dataset', type=str, default='FB15k',
+        self.add_argument('--dataset', type=str, default='kg',
                           help='The name of the builtin knowledge graph. Currently, the builtin knowledge '\
                                   'graphs include FB15k, FB15k-237, wn18, wn18rr and Freebase. '\
                                   'DGL-KE automatically downloads the knowledge graph and keep it under data_path.')
-        self.add_argument('--format', type=str, default='built_in',
+        self.add_argument('--format', type=str, default='udd_hrt',
                           help='The format of the dataset. For builtin knowledge graphs,'\
                                   'the foramt should be built_in. For users own knowledge graphs,'\
                                   'it needs to be raw_udd_{htr} or udd_{htr}.')
@@ -235,16 +234,16 @@ class CommonArgParser(argparse.ArgumentParser):
                                   'In both cases, valid_file and test_file are optional.')
         self.add_argument('--delimiter', type=str, default='\t',
                           help='Delimiter used in data files. Note all files should use the same delimiter.')
-        self.add_argument('--save_path', type=str, default='ckpts',
+        self.add_argument('--save_path', type=str, default='kg_embedding',
                           help='the path of the directory where models and logs are saved.')
         self.add_argument('--no_save_emb', action='store_true',
                           help='Disable saving the embeddings under save_path.')
-        self.add_argument('--max_step', type=int, default=80000,
+        self.add_argument('--max_step', type=int, default=320000,
                           help='The maximal number of steps to train the model.'\
                                   'A step trains the model with a batch of data.')
         self.add_argument('--batch_size', type=int, default=1024,
                           help='The batch size for training.')
-        self.add_argument('--batch_size_eval', type=int, default=8,
+        self.add_argument('--batch_size_eval', type=int, default=1000,
                           help='The batch size used for validation and test.')
         self.add_argument('--neg_sample_size', type=int, default=256,
                           help='The number of negative samples we use for each positive sample in the training.')
@@ -261,7 +260,7 @@ class CommonArgParser(argparse.ArgumentParser):
                           help='Randomly sample some percentage of edges for evaluation.')
         self.add_argument('--no_eval_filter', action='store_true',
                           help='Disable filter positive edges from randomly constructed negative edges for evaluation')
-        self.add_argument('-log', '--log_interval', type=int, default=1000,
+        self.add_argument('-log', '--log_interval', type=int, default=4000,
                           help='Print runtime of different components every x steps.')
         self.add_argument('--eval_interval', type=int, default=10000,
                           help='Print evaluation results on the validation dataset every x steps'\
@@ -279,16 +278,16 @@ class CommonArgParser(argparse.ArgumentParser):
                           help='We force a synchronization between processes every x steps for'\
                                   'multiprocessing training. This potentially stablizes the training process'
                                   'to get a better performance. For multiprocessing training, it is set to 1000 by default.')
-        self.add_argument('--hidden_dim', type=int, default=400,
+        self.add_argument('--hidden_dim', type=int, default=64,
                           help='The embedding size of relation and entity')
-        self.add_argument('--lr', type=float, default=0.01,
+        self.add_argument('--lr', type=float, default=0.25,
                           help='The learning rate. DGL-KE uses Adagrad to optimize the model parameters.')
         self.add_argument('-g', '--gamma', type=float, default=12.0,
                           help='The margin value in the score function. It is used by TransX and RotatE.')
         self.add_argument('-de', '--double_ent', action='store_true',
-                          help='Double entitiy dim for complex number or canonical polyadic. It is used by RotatE and SimplE.')
+                          help='Double entitiy dim for complex number It is used by RotatE.')
         self.add_argument('-dr', '--double_rel', action='store_true',
-                          help='Double relation dim for complex number or canonical polyadic. It is used by RotatE and SimplE')
+                          help='Double relation dim for complex number.')
         self.add_argument('-adv', '--neg_adversarial_sampling', action='store_true',
                           help='Indicate whether to use negative adversarial sampling.'\
                                   'It will weight negative samples with higher scores more.')
@@ -298,3 +297,4 @@ class CommonArgParser(argparse.ArgumentParser):
                           help='The coefficient for regularization.')
         self.add_argument('-rn', '--regularization_norm', type=int, default=3,
                           help='norm used in regularization.')
+
